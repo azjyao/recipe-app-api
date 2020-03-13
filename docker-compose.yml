@@ -1,6 +1,7 @@
 version: "3"
 
 services:
+  #app service
   app:
     build:
       context: .
@@ -9,4 +10,21 @@ services:
     volumes:
       - ./app:/app
     command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000"
+      sh -c "python manage.py wait_for_db &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DB_HOST=db #name of the service that runs our db
+      - DB_NAME=app #equals our postgres db
+      - DB_USER=postgres
+      - DB_PASS=supersecretpasswordjy
+    depends_on: # want our app service to depend on the db service. dependencies will run before this one
+      - db
+
+  #db service
+  db:
+    image: postgres:10-alpine #finds the postgres image on dockerhub and pulls 10-alpine version
+    environment: #set for local environment. When pushing on production, set creds with travis/jenkins, or whatever is building app
+      - POSTGRES_DB=app #postgres image is specifically looking for these env variables
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=supersecretpasswordjy
