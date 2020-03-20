@@ -36,7 +36,7 @@ class PublicUserApiTests(TestCase):
     def test_user_exists(self):
         """Test creating user that already exists fails"""
         payload = {'email': 'test@jyaoyao.com', 'password': 'testpass',
-                    'name': 'test'}
+                   'name': 'test'}
         create_user(**payload)
 
         res = self.client.post(CREATE_USER_URL, payload)
@@ -45,7 +45,7 @@ class PublicUserApiTests(TestCase):
 
     def test_password_too_short(self):
         payload = {'email': 'test@jyaoyao.com', 'password': 'pw',
-                    'name': 'test'}
+                   'name': 'test'}
 
         res = self.client.post(CREATE_USER_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
